@@ -1,0 +1,26 @@
+{
+  "name": "webmail-backend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "connect-ensure-login": "^0.1.1",
+    "connect-mongodb-session": "^2.4.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "imapflow": "^1.0.56",
+    "mailparser": "^3.1.0",
+    "mongodb": "^3.6.5",
+    "mongoose": "^5.12.2",
+    "nodemailer": "^6.4.18",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0"
+  }
+}
