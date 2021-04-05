@@ -13,6 +13,9 @@ const RegisterHandler = require("./handlers/registerHandler");
 const GetAccountsHandler = require("./handlers/getAccountsHandler");
 const AddAccountHandler = require("./handlers/addAccountHandler");
 const SendMailHandler = require("./handlers/sendMailHandler");
+const DeleteAccountHandler = require("./handlers/deleteAccountHandler");
+const UpdateAccountHandler = require("./handlers/updateAccountHandler");
+const DeleteMailHandler = require("./handlers/deleteMailHandler");
 
 const UserDAO = require("./data/userDAO");
 
@@ -73,9 +76,15 @@ app.use(passport.session());
 //Connect to the mongoDB
 Database.connect();
 
-// Get mail 
+// Get email 
 app.post('/api/mail/', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
     let handler = new GetMailHandler();
+    await handler.handle(req, res);
+});
+
+// Delete an email 
+app.post('/api/mail/delete', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+    let handler = new DeleteMailHandler();
     await handler.handle(req, res);
 });
 
@@ -97,9 +106,21 @@ app.get('/api/accounts', require('connect-ensure-login').ensureLoggedIn(), async
     await handler.handle(req, res);
 });
 
+//Update an email account
+app.post('/api/account/update', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+    let handler = new UpdateAccountHandler();
+    await handler.handle(req, res);
+});
+
 // Add an email account
 app.post('/api/account', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
     let handler = new AddAccountHandler();
+    await handler.handle(req, res);
+});
+
+// Delete an email account
+app.delete('/api/account/:id', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+    let handler = new DeleteAccountHandler();
     await handler.handle(req, res);
 });
 
@@ -122,7 +143,14 @@ app.get('/api/user', function(req, res) {
 // Logout user
 app.post('/api/logout',function(req, res){
     req.logout();
-    res.redirect('/');
+    store.destroy(req.session.id, (err) => {
+        if(err) {
+            console.log(err);
+            res.sendStatus(500);
+        }
+    })
+    res.sendStatus(200);
+    //res.redirect('/');
 });
 
 

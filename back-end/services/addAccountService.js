@@ -4,6 +4,8 @@ class AddAccountService {
     async addAccount(account) {
         let accountDAO = new EmailAccountDAO();
 
+        console.log(account);
+
         try {
             return await accountDAO.addAccount(account);
         }

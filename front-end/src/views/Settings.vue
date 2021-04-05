@@ -22,9 +22,12 @@ export default {
     name: "Settings",
     data() {
         return {
-            current: "General",
-            settings: ["General", "Appearance", "Email Accounts"]
+            settings: ["General", "Appearance", "Email Accounts"],
+            current: null
         }
+    },
+    created() {
+        this.current = this.settings[this.$route.params.page]||this.settings[0];
     },
     methods: {
         selectItem(item) {

@@ -14,12 +14,17 @@ class SyncMailService {
             await conn.connect();
             let folders = account.folders;
             for(let folder of folders) {
-                let emails = await mailImap.getMail(1, folder);
+                let emails = [];
+                try {
+                    emails = await mailImap.getMail(30, folder);
+                }
+                catch(err) {
+                    console.log(err);
+                }
 
                 for(let mail of emails) {
                     try {
                         let messageParts = await this.parseMessage(mail);
-                        console.log(mail);
                         let data = {
                             _id: mail.uid,
                             uid: mail.uid,
@@ -30,12 +35,12 @@ class SyncMailService {
                             message: messageParts.text,
                             html: messageParts.html,
                             from: {
-                                name: mail.envelope.from[0].name||"",
-                                address: mail.envelope.from[0].address
+                                name: mail.envelope.from?mail.envelope.from[0].name:"",
+                                address: mail.envelope.from?mail.envelope.from[0].address:""
                             },
                             to: {
-                                name: mail.envelope.to[0].name||"",
-                                address: mail.envelope.to[0].address
+                                name: mail.envelope.to?mail.envelope.to[0].name:"",
+                                address: mail.envelope.to?mail.envelope.to[0].address:""
                             },
                             date: mail.envelope.date.toString()
                         }
@@ -46,7 +51,7 @@ class SyncMailService {
                     }
                 }
             }
-
+            console.log(account.email);
             await mailDAO.addMail(parsedEmails);
         }
         catch(err) {

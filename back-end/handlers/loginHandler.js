@@ -6,7 +6,7 @@ class LoginHandler {
         
         try {
             let user = await service.login(username, password);
-            if(user !== null) {
+            if(user !== null && user !== undefined) {
                 return done(null, user);
             }
         }

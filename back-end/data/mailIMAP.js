@@ -43,6 +43,31 @@ class MailIMAP {
         }
     }
 
+    async appendEmail(folder, emailBuffer) {
+        await this.conn.getClient().append(folder, emailBuffer);
+    }
+
+    /** 
+     * Permanently delete an email 
+     */
+    async deleteEmail(folder, uid) {
+        let client = this.conn.getClient();
+
+        // Select and lock a mailbox. Throws if mailbox does not exist
+        let lock = await client.getMailboxLock(folder);
+
+        try {
+            let query = {
+                uid: uid
+            }
+
+            await client.messageDelete(query);
+        }
+        finally {
+            lock.release();
+        }
+    }
+
 }
 
 module.exports = MailIMAP;

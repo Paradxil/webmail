@@ -8,7 +8,7 @@
             <form @submit.prevent="login">
                 <input type="text" v-model="username" id="username" placeholder="username"/>
                 <input type="password" v-model="password" id="password" placeholder="password"/>
-                <input type="submit">
+                <input type="submit" value="Login">
             </form>
             <a>forgot password</a>
         </div>

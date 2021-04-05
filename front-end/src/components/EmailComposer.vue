@@ -13,7 +13,7 @@
                 <input type="text" v-model="toaddress" id="toaddress"/>
             </div>
             <div class="input-wrapper subject">
-                <input type="text" v-model="subject" id="subject" placeholder="subject"/>
+                <input type="text" v-model="emailSubject" id="subject" placeholder="subject"/>
             </div>
         </div>
         <div class="editor-wrapper">
@@ -28,18 +28,24 @@ const Quill = require('quill');
 const axios = require('axios');
 
 export default {
+    props: {
+        to: String,
+        from: String,
+        subject: String
+    },
     data() {
         return {
             editor: null,
             fromAddresses: [],
             accounts: {},
-            fromaddress: null,
-            subject: null,
-            toaddress: null
+            fromaddress: this.from||null,
+            emailSubject: this.subject||"",
+            toaddress: this.to||null
         }
     },
     async created() {
         await this.getFromAddresses();
+        console.log(this.fromaddress);
     },
     methods: {
         async getFromAddresses() {
@@ -47,39 +53,45 @@ export default {
             let accounts = result.data;
 
             for(let account of accounts) {
-                this.fromAddresses.push(account.user);
-                this.accounts[account.user] = account;
+                this.fromAddresses.push(account.email);
+                this.accounts[account.email] = account;
             }
         },
         async sendEmail() {
             let result = await axios.post('/api/send', {
                 text: this.editor.getText(),
                 html: this.editor.root.innerHTML,
+                subject: this.emailSubject,
                 to: this.toaddress,
                 from: this.accounts[this.fromaddress]._id
             });
-            if(result.isSuccess) {
-                console.log("YAY");
+            if(result.status === 200) {
+                this.resetForm();
             }
+        },
+        resetForm() {
+            this.fromaddress = null;
+            this.emailSubject = null;
+            this.toaddress = null;
+            this.editor.setText("");
         }
     },
     mounted() {
         var toolbarOptions = [
-        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-        ['blockquote', 'code-block'],
-
-        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-        [{ 'direction': 'rtl' }],                         // text direction
-
+        [{ 'font': [] }],
         [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        [{ 'align': [] }],
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        //['blockquote', 'code-block'],
+
+        //[{ 'header': 1 }, { 'header': 2 }],               // custom button values
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        //[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+        //[{ 'direction': 'rtl' }],                         // text direction
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
 
         [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-        [{ 'font': [] }],
-        [{ 'align': [] }],
 
         ['clean']                                         // remove formatting button
         ];

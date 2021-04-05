@@ -3,13 +3,14 @@ const { ImapFlow } = require('imapflow');
 class IMAPConnection {
     constructor(account) {
         this.client = new ImapFlow({
-            host: account.host,
-            port: account.port,
-            secure: account.secure,
+            host: account.imap.host,
+            port: account.imap.port,
+            secure: account.imap.secure,
             auth: {
-                user: account.user,
-                pass: account.password
-            }
+                user: account.imap.user,
+                pass: account.imap.password
+            },
+            logger: {debug(obj){}, info(obj){}, warn(obj){}, error(obj){console.log(obj)}}
         });
     }
 

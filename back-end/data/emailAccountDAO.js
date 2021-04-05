@@ -13,8 +13,14 @@ class EmailAccountDAO {
     }
 
     async addAccount(account) {
-        let emailAccount = new EmailAccount(account);
-        await emailAccount.save();
+        try {
+            let emailAccount = new EmailAccount(account);
+            await emailAccount.save();
+        }
+        catch(err) {
+            console.log(err);
+            throw err;
+        }
     }
 
     async update(accountid, data) {
@@ -28,6 +34,30 @@ class EmailAccountDAO {
                 account[key] = data[key];
             }
             await account.save();
+        }
+    }
+
+    async addUpdate(account) {
+        let emailAccount = null;
+        if(account._id !== null) {
+            emailAccount = await this.getAccount(account._id);
+        }
+
+        if(emailAccount !== null) {
+            this.update(account._id, account);
+        }
+        else {
+            this.addAccount(account);
+        }
+    }
+
+    async deleteAccount(accountid) {
+        try {
+            await EmailAccount.deleteOne({_id: accountid});
+        }
+        catch(err) {
+            console.log(err);
+            throw err;
         }
     }
 }

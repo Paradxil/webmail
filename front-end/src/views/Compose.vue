@@ -1,6 +1,6 @@
 <template>
     <div class="composer-wrapper">
-        <email-composer/>
+        <email-composer :to="$route.params.to" :from="$route.params.from" :subject="$route.params.subject"/>
     </div>
 </template>
 

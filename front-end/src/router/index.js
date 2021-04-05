@@ -45,12 +45,12 @@ const routes = [
     component: Mailbox
   },
   {
-    path: '/settings',
+    path: '/settings/:page?',
     name: 'Settings',
     component: Settings
   },
   {
-    path: '/compose',
+    path: '/compose/:to?/:from?/:subject?',
     name: 'Compose',
     component: Compose
   }

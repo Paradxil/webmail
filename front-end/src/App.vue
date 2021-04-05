@@ -1,10 +1,9 @@
 <template>
   <div id="app">
     <div id="nav" :key="$root.loggedIn">
-      <router-link v-if="!$root.loggedIn" to="/">Home</router-link>
+      <router-link class="logo" :to="$root.loggedIn?'/mailbox':'/'"><img src="./assets/logo2.png"/></router-link>
       <router-link v-if="$root.loggedIn" to="/mailbox">Mailbox<icon-base class="icon" name="mail"/></router-link>
       <router-link v-if="$root.loggedIn" to="/compose">Compose<icon-base class="icon" name="edit-2"/></router-link>
-      <router-link v-if="!$root.loggedIn" to="/about">About</router-link>
       <div class="nav-spacer"></div>
       <router-link v-if="$root.loggedIn" to="/settings" title="Settings"><icon-base name="settings"/></router-link>
       <router-link v-if="!$root.loggedIn" to="/login">Login</router-link>
@@ -37,6 +36,7 @@ export default {
   --accent-1: #b5838d;
   --accent-2: rgba(0,0,0,0.1);
   --accent-3: rgba(255,255,255,1);
+  --accent-4: #FFB4A2;
 }
 
 * {
@@ -59,11 +59,10 @@ export default {
 #nav {
   background-color: var(--background-2);
   color: var(--font-2);
-  padding: 20px;
-  box-shadow: 0px 0px 20px var(--accent-2);
   z-index: 30;
   display: flex;
   align-items: center;
+  padding: 10px;
 }
 
 #nav a {
@@ -73,7 +72,7 @@ export default {
   padding: 6px 10px;
   border-radius: 3px;
   display: flex;
-align-items: center;
+  align-items: center;
 }
 
 #nav a .icon {
@@ -89,8 +88,29 @@ align-items: center;
   background-color: var(--accent-3);
 }
 
+.logo {
+  background-color: initial !important;
+  margin-right: 10px;
+}
+
+.logo img{
+  max-height: 40px;
+}
+
 .nav-spacer {
   flex: 1;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 200;
+}
+
+h1 {
+  font-size: 42px;
+}
+
+img {
+  max-width: 100%;
 }
 
 </style>

@@ -7,11 +7,12 @@ class RegisterHandler {
         try {
             let username = req.body.username;
             let password = req.body.password;
+            let email = req.body.email;
 
-            await service.register(username, password);
+            await service.register(username, password, email);
             res.sendStatus(200);
         }
-        catch {
+        catch(err) {
             console.log(err);
             res.sendStatus(500);
         }

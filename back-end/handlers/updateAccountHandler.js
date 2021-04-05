@@ -1,13 +1,14 @@
-const AddAccountService = require('../services/addAccountService');
-const SyncFoldersService = require('../services/syncFoldersService');
+const UpdateAccountService = require("../services/updateAccountService");
+const SyncFoldersService = require("../services/syncFoldersService");
 
-class AddAccountHandler {
+class UpdateAccountHandler {
     async handle(req, res) {
-        let service = new AddAccountService();
+        let service = new UpdateAccountService();
         let syncFoldersService = new SyncFoldersService();
 
         try {
             let account = {
+                _id: req.body._id,
                 userid: req.user._id,
                 email: req.body.email,
                 name: req.body.name,
@@ -15,7 +16,7 @@ class AddAccountHandler {
                 smtp: req.body.smtp
             }
 
-            await service.addAccount(account);
+            await service.updateAccount(req.body._id, account);
             await syncFoldersService.syncFolders(account);
             res.sendStatus(200);
         }
@@ -26,4 +27,4 @@ class AddAccountHandler {
     }
 }
 
-module.exports = AddAccountHandler;
+module.exports = UpdateAccountHandler;

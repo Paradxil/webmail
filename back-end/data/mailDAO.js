@@ -38,5 +38,9 @@ class MailDAO {
             }
         }
     }
+
+    async deleteMail(accountid, folder, uid) {
+        await Email.deleteOne({accountid: accountid, folder: folder, uid: uid});
+    }
 }
 module.exports = MailDAO;
