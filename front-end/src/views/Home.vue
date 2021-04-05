@@ -26,7 +26,7 @@
             <icon-base name="sliders"/>
           </div>
           <div class="description">
-            Intuitive interface.
+            Responsive and easy to use.
           </div>
         </div>
       </div>
