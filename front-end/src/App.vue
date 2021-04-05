@@ -10,7 +10,11 @@
       <router-link v-if="!$root.loggedIn" to="/register">Register</router-link>
       <router-link v-if="$root.loggedIn" to="/logout" title="Logout"><icon-base name="log-out"/></router-link>
     </div>
-    <router-view/>
+    <router-view class="main-content"/>
+    <div class="footer">
+      <div class="footer-left"><a href="https://github.com/Paradxil/webmail">View Code</a></div>
+      <div class="footer-right">Copyright Hunter Stratton 2021</div>
+    </div>
   </div>
 </template>
 
@@ -31,6 +35,7 @@ export default {
   --background-1: #fff;
   --background-2: #6d6875;
   --background-3: #b5838d;
+  --background-4: #666;
   --font-1: #333;
   --font-2: #fff;
   --accent-1: #b5838d;
@@ -111,6 +116,39 @@ h1 {
 
 img {
   max-width: 100%;
+}
+
+.main-content {
+  flex: 1;
+}
+
+a {
+  text-decoration: none;
+}
+
+.footer {
+  display: flex;
+  background-color: var(--background-4);
+  color: var(--font-2);
+  padding: 4px;
+}
+
+.footer > * {
+  width: 100%;
+}
+
+.footer-left {
+  text-align: left;
+  padding-left: 4px;
+}
+
+.footer-right {
+  padding-right: 4px;
+  text-align: right;
+}
+
+.footer a {
+    color: var(--font-2);
 }
 
 </style>
