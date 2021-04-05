@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="sidebar narrow" @click="toggleSidebar()">
-                <div class="sidebar-item">
+                <div class="sidebar-item tall">
                     <icon-base :name="collapsed?'chevron-right':'chevron-left'"/>
                 </div>
             </div>
@@ -95,7 +95,7 @@ export default {
     data() {
         return {
             //currentEmails: [],
-            currentMessage: "No message selected.",
+            currentMessage: null,
             currentEmail: null,
             iframeHeight: "100px",
             accountsList: {
@@ -108,8 +108,10 @@ export default {
         }
     },
     async created() {
-        const blob = new Blob([""], { type:'text/html' });
-        this.currentMessage = URL.createObjectURL(blob);
+        if(window.screen.availWidth > 600) {
+            this.collapsed = false;
+        }
+
         await this.getAll();
         await this.getAll(true);
         this.ready = true;
@@ -294,6 +296,10 @@ export default {
 .sidebar-item {
     text-align: center;
     padding: 8px 5px;
+}
+
+.sidebar-item.tall {
+    height: 100%;
 }
 
 .current {

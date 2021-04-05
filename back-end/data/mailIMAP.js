@@ -36,7 +36,7 @@ class MailIMAP {
     async getAccountFolders() {
         try {
             let list = await this.conn.getClient().list();
-            return list.map((item) => {return item.path});
+            return list.map((item) => {return item.path}).reverse();
         }
         catch(err) {
             console.log(err);
