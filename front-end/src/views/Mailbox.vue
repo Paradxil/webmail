@@ -123,7 +123,7 @@ export default {
         this.ready = true;
 
         //Check and sync mail once per minute.
-        setInterval(this.getAll(true), 1000 * 60);
+        setInterval(()=>{this.getAll(true);}, 1000 * 60);
 
     },
     methods: {
