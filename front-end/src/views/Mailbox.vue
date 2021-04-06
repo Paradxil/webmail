@@ -104,7 +104,8 @@ export default {
             currentAccountID: null,
             currentFolder: null,
             ready: false,
-            collapsed: true
+            collapsed: true,
+            timer: null
         }
     },
     async created() {
@@ -123,8 +124,11 @@ export default {
         this.ready = true;
 
         //Check and sync mail once per minute.
-        setInterval(()=>{this.getAll(true);}, 1000 * 60);
+        this.timer = setInterval(()=>{this.getAll(true);}, 1000 * 60);
 
+    },
+    beforeDestroy() {
+        clearInterval(this.timer);  
     },
     methods: {
         async getAll(sync = false) {
