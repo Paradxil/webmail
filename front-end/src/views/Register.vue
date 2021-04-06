@@ -17,7 +17,6 @@
 
 <script>
 const axios = require('axios');
-const utils = require('../utils');
 
 export default {
     name: "Register",
