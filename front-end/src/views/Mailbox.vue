@@ -112,9 +112,19 @@ export default {
             this.collapsed = false;
         }
 
+        //Get mail without syncing.
+        //This will download mail already synced to the server and should be fast.
         await this.getAll();
+
+        //Now sync mail, this takes much longer but the user can already see previously synced mail.
         await this.getAll(true);
+
+        //Stop showing the loading message.
         this.ready = true;
+
+        //Check and sync mail once per minute.
+        setInterval(this.getAll(true), 1000 * 60);
+
     },
     methods: {
         async getAll(sync = false) {
@@ -151,7 +161,6 @@ export default {
                 await axios.post("/api/sync", {
                     accountid: accountid||this.currentAccountID
                 });
-                return true;
             } catch (error) {
                 console.log(error);
             }
