@@ -31,15 +31,14 @@ export default {
     },
     methods: {
         async register() {
-            await axios.post("/api/register", {
+            let response = await axios.post("/api/register", {
                 username: this.username,
                 email: this.recoveryEmail,
                 password: this.password
             });
 
-            this.$root.loggedIn = await utils.isLoggedIn();
-            if(this.$root.loggedIn === true) {
-                this.$router.push({ name: 'Mailbox'});
+            if(response.status === 200) {
+                this.$router.push({ name: 'Login'});
             }
             else {
                 this.message = "Unable to register, try again."
