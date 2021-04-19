@@ -145,13 +145,17 @@ app.post('/api/register', CaptchaHandler.handle, async function(req, res) {
 });
 
 // Login user
-app.post('/api/login', CaptchaHandler.handle, passport.authenticate('local'), function(req, res) {
+app.post('/api/login', CaptchaHandler.handle, passport.authenticate('local', {failureRedirect: "/api/login/failure"}), function(req, res) {
     if(req.user !== null && req.user !== undefined) {
         res.send(Response.Success({user: req.user}));
     }
     else {
         res.send(Response.Error("Invalid username or password."));
     }
+});
+
+app.get('/api/login/failure', (req, res) => {
+    res.send(Response.Error("Invalid username or password."));
 });
 
 // Get the current user
