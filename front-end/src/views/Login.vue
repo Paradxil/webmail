@@ -47,7 +47,6 @@ export default {
                     this.$router.push({ name: 'Mailbox'});
                 }
                 else {
-                    console.log(response);
                     this.message = response.message;
                 }
             }
