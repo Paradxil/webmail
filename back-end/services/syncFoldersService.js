@@ -10,11 +10,14 @@ class SyncFoldersService {
 
         try {
             await conn.connect();
+
             let folders = await mailImap.getAccountFolders();
+            
             let data = {
                 folders: folders
             }
-            accountDAO.update(account._id, data);
+
+            await accountDAO.update(account._id, data);
         }
         catch(err) {
             throw err;

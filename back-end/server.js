@@ -18,6 +18,8 @@ const UpdateAccountHandler = require("./handlers/updateAccountHandler");
 const DeleteMailHandler = require("./handlers/deleteMailHandler");
 const CaptchaHandler = require("./handlers/captchaHandler");
 
+const Response = require("./model/response/response");
+
 const UserDAO = require("./data/userDAO");
 
 const app = express();
@@ -82,7 +84,7 @@ function isAuthenticated(req, res, next) {
         return next();
     }
     else {
-        res.redirect('/login');
+        res.send(Response.Unauthorized());
     }
 }
 
@@ -135,26 +137,35 @@ app.delete('/api/account/:id', isAuthenticated, async (req, res) => {
 });
 
 // Register a user
-app.post('/api/register', async function(req, res) {
+app.post('/api/register', CaptchaHandler.handle, async function(req, res) {
     let handler = new RegisterHandler(req, res);
     await handler.handle(req, res);
 });
 
 // Login user
 app.post('/api/login', CaptchaHandler.handle, passport.authenticate('local'), function(req, res) {
-    res.redirect('/');
+    if(req.user !== null && req.user !== undefined) {
+        res.send(Response.Success({user: req.user}));
+    }
+    else {
+        res.send(Response.Error("Invalid username or password."));
+    }
 });
 
 // Get the current user
 app.get('/api/user', isAuthenticated, function(req, res) {
-    res.send(req.user||null);
+    res.send(Response.Success({user: req.user}));
 });
 
 // Logout user
 app.post('/api/logout', isAuthenticated, function(req, res){
     req.session.destroy(function (err) {
+        if(err) {
+            res.send(Response.Error("Error logging out."));
+            return;
+        }
         req.logout();
-        res.sendStatus(200);
+        res.send(Response.Success());
     });
 });
 

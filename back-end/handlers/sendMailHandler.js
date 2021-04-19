@@ -1,6 +1,8 @@
 const SendMailService = require('../services/sendMailService');
 const GetAccountService = require('../services/getAccountService');
 
+const Response = require("../model/response/response");
+
 class SendMailHandler {
     async handle(req, res) {
         let service = new SendMailService();
@@ -21,11 +23,11 @@ class SendMailHandler {
             };
 
             await service.sendMail(email, account);
-            res.sendStatus(200);
+            res.send(Response.Success());
         }
         catch(err) {
             console.log(err);
-            res.sendStatus(500);
+            res.send(Response.Error("Error sending email.")); //TODO: Include more information in the response.
         }
     }
 }

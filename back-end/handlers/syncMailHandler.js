@@ -2,6 +2,8 @@ const GetAccountService = require("../services/getAccountService");
 const SyncFoldersService = require("../services/syncFoldersService");
 const SyncMailService = require("../services/syncMailService");
 
+const Response = require("../model/response/response");
+
 class SyncMailHandler {
     async handle(req, res) {
         let syncMailService = new SyncMailService();
@@ -11,19 +13,21 @@ class SyncMailHandler {
         try {
             let account = await getAccountService.getAccount(req.body.accountid);
 
+            //TODO: Check for invalid request
+
             //Make sure this account belongs to the current user
             if(account === null || account.userid === null || account.userid !== req.user._id.toString()) {
-                res.sendStatus(403);
+                res.send(Response.Unauthorized());
                 return;
             }
 
             await syncFoldersService.syncFolders(account);
             await syncMailService.syncMail(account);
-            res.sendStatus(200);
+            res.send(Response.Success());
         }
         catch(err) {
             console.log(err);
-            res.sendStatus(500);
+            res.send(Response.Error("Error syncing email.")); //TODO: Include more information. Was the imap account invalid? etc.
         }
     }
 }

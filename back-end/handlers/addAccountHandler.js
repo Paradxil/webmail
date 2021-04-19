@@ -1,6 +1,8 @@
 const AddAccountService = require('../services/addAccountService');
 const SyncFoldersService = require('../services/syncFoldersService');
 
+const Response = require("../model/response/response");
+
 class AddAccountHandler {
     async handle(req, res) {
         let service = new AddAccountService();
@@ -15,13 +17,15 @@ class AddAccountHandler {
                 smtp: req.body.smtp
             }
 
+            //TODO: Check for invalid requests
+
             await service.addAccount(account);
             await syncFoldersService.syncFolders(account);
-            res.sendStatus(200);
+            res.send(Response.Success());
         }
         catch(err) {
             console.log(err);
-            res.sendStatus(500);
+            res.send(Response.Error("Error adding account."));
         }
     }
 }

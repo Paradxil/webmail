@@ -17,7 +17,6 @@
 </template>
 
 <script>
-const axios = require('axios');
 const utils = require('../utils');
 
 export default {
@@ -36,23 +35,26 @@ export default {
     methods: {
         async login() {
             try {
-                await axios.post("/api/login", {
+                let response = await utils.post("/api/login", {
                     captchaid: window.getCaptchaID(),
                     username: this.username,
                     password: this.password
                 });
+
+                if(response.success) {
+                    this.$root.user = response.data.user;
+                    this.$root.loggedIn = true;
+                    this.$router.push({ name: 'Mailbox'});
+                }
+                else {
+                    console.log(response);
+                    this.message = response.message;
+                }
             }
             catch(err) {
                 console.log(err);
             }
-            
-            this.$root.loggedIn = await utils.isLoggedIn();
-            if(this.$root.loggedIn === true) {
-                this.$router.push({ name: 'Mailbox'});
-            }
-            else {
-                this.message = "Unable to login, try again."
-            }
+        
         }
     }
 }

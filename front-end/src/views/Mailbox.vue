@@ -6,8 +6,8 @@
                     <div class="sidebar-section-header" :class="{'current':currentAccountID === account.account._id}">
                         <p>{{account.account.email}}</p>
                     </div>
-                    <div class="sidebar-item" v-for="folder in account.account.folders" :class="{'current':currentFolder===folder&&currentAccountID===account.account._id}" :key="folder" @click="selectFolder(folder, account.account._id)">
-                        <p>{{folder}}</p>
+                    <div class="sidebar-item" v-for="folder in account.account.folders" :class="{'current':currentFolder===folder&&currentAccountID===account.account._id}" :key="folder.path" @click="selectFolder(folder, account.account._id)">
+                        <p>{{folder.nicename}}</p>
                     </div>
                 </div>
                 <div class="sidebar-item no-accounts" v-if="accountsList === null || Object.keys(accountsList).length === 0" @click="addNewAccount()">
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+const utils = require('../utils');
 import DateView from '../components/DateView.vue';
 import Loading from '../components/Loading.vue';
 
@@ -139,12 +139,17 @@ export default {
                     await this.syncMail(account._id);
                 }
                 for(let folder of account.folders) {
-                    this.getMail(folder, account._id);  
+                    this.getMail(folder.path, account._id);  
                 }
             }
         },
         async getAccounts() {
-            let result = await axios.get("api/accounts");
+            let result = await utils.get("api/accounts");
+
+            if(!result.success) {
+                return;
+            }
+
             for(let account of result.data) {
                 if(!this.accountsList[account._id]) {
                     this.$set(this.accountsList, account._id, {});
@@ -155,33 +160,38 @@ export default {
                     this.$set(this.accountsList[account._id], 'emails', {});
 
                     for(let folder of account.folders) {
-                        this.$set(this.accountsList[account._id].emails, folder, []);
+                        this.$set(this.accountsList[account._id].emails, folder.path, []);
                     }
                 }
             }
         },
         async syncMail(accountid=null) {
             try {
-                await axios.post("/api/sync", {
+                await utils.post("/api/sync", {
                     accountid: accountid||this.currentAccountID
                 });
             } catch (error) {
                 console.log(error);
             }
         },
-        async getMail(folder=null, accountid=null) {
-            if(this.currentFolder === null && folder === null) {
+        async getMail(folderPath=null, accountid=null) {
+            if(this.currentFolder === null && folderPath === null) {
                 return;
             }
 
             try {
-                let response = await axios.post("/api/mail", {
+                folderPath = folderPath||this.currentFolder.path;
+
+                let response = await utils.post("/api/mail", {
                     id: (accountid||this.currentAccountID),
-                    folder: (folder||this.currentFolder)
+                    folder: folderPath
                 });
 
-                this.$set(this.accountsList[(accountid||this.currentAccountID)].emails, folder, response.data);
-                return true;
+                if(!response.success) {
+                    return;
+                }
+
+                this.$set(this.accountsList[(accountid||this.currentAccountID)].emails, folderPath, response.data);
             } catch (error) {
                 console.log(error);
             }
@@ -228,13 +238,13 @@ export default {
         },
         async deleteEmail() {
             try {
-                let response = await axios.post("/api/mail/delete", {
+                let response = await utils.post("/api/mail/delete", {
                         uid: this.currentEmail._id,
                         accountid: this.currentAccountID,
                         folder: this.currentFolder
                     });
 
-                if(response.status === 200) {
+                if(response.success) {
                     //Remove from list without a request
                     this.currentEmail = null;
                     await this.getAll();
@@ -250,7 +260,7 @@ export default {
             if(!this.currentAccountID||!this.currentFolder) {
                 return [];
             }
-            return this.accountsList[this.currentAccountID].emails[this.currentFolder];
+            return this.accountsList[this.currentAccountID].emails[this.currentFolder.path];
         }
     }
 }

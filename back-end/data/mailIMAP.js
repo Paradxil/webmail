@@ -4,11 +4,12 @@ class MailIMAP {
     }
 
     /**
-     * Get recieved emails from the Imap server.
+     * Get received emails from the Imap server.
      * @param {Number} last How far back in days to retrieve emails. Defaults to the last 30 days.
      */
     async getMail(last = 30, folder = "INBOX") {
         let client = this.conn.getClient();
+        
         // Select and lock a mailbox. Throws if mailbox does not exist
         let lock = await client.getMailboxLock(folder);
 
@@ -36,7 +37,18 @@ class MailIMAP {
     async getAccountFolders() {
         try {
             let list = await this.conn.getClient().list();
-            return list.map((item) => {return item.path}).reverse();
+            let folders = [];
+            
+            for(let item of list) {
+                let folder = {
+                    path: item.path,
+                    name: item.name,
+                    use: item.specialUse||"",
+                    nicename: item.name
+                };
+                folders.push(folder);
+            }
+            return folders;
         }
         catch(err) {
             console.log(err);

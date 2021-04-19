@@ -34,7 +34,7 @@ export default {
                     this.attempts += 1;
                     this.logout();
                 }
-                this.message = "Unable to loginout, try reloading the page."
+                this.message = "Unable to logout, try reloading the page."
             }
         }
     }

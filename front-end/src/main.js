@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 
-const utils = require('./utils');
+//const utils = require('./utils');
 
 import IconBase from 'feather-icons-vue'
 Vue.use(IconBase)
@@ -13,15 +13,19 @@ new Vue({
   router,
   data() {
     return {
-      loggedIn: false
+      loggedIn: false,
+      user: null
     }
   },
   async created() {
-    this.loggedIn = await utils.isLoggedIn();
+    this.loggedIn = false; //await utils.isLoggedIn();
   },
   watch: {
     '$route': async function() {
-      this.loggedIn = await utils.isLoggedIn();
+      //this.loggedIn = await utils.isLoggedIn();
+      if(this.loggedIn === false) {
+        //this.$router.push({ name: 'Home'});
+      }
     }
   },
   render: h => h(App)

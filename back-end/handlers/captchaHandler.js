@@ -1,11 +1,13 @@
 
 const CaptchaService = require("../services/captchaService");
+const Response = require("../model/response/response");
 
 class RegisterHandler {
     static async handle(req, res, next) {
         let captchaService = new CaptchaService();
 
         try {
+            //TODO: Check for invalid requests
             let captchaid = req.body.captchaid;
             let verified = await captchaService.verifyCaptcha(captchaid);
 
@@ -17,7 +19,7 @@ class RegisterHandler {
             }
         }
         catch(err) {
-            res.sendStatus(403);
+            res.send(Response.Error("Error validating captcha."));
             console.log(err);
         }
     }

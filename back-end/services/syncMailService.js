@@ -16,7 +16,7 @@ class SyncMailService {
             for(let folder of folders) {
                 let emails = [];
                 try {
-                    emails = await mailImap.getMail(30, folder);
+                    emails = await mailImap.getMail(30, folder.path);
                 }
                 catch(err) {
                     console.log(err);
@@ -30,7 +30,7 @@ class SyncMailService {
                             uid: mail.uid,
                             userid: account.userid,
                             accountid: account._id,
-                            folder: folder,
+                            folder: folder.path,
                             subject: mail.envelope.subject,
                             message: messageParts.text,
                             html: messageParts.html,
@@ -51,7 +51,6 @@ class SyncMailService {
                     }
                 }
             }
-            console.log(account.email);
             await mailDAO.addMail(parsedEmails);
         }
         catch(err) {

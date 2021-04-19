@@ -50,7 +50,7 @@
 </template>
 
 <script>
-const axios = require('axios');
+const utils = require('../utils');
 
 export default {
     name: "AccountSettings",
@@ -73,26 +73,26 @@ export default {
     },
     methods: {
         async getAccounts() {
-            let result = await axios.get("/api/accounts");
+            let result = await utils.get("/api/accounts");
             this.accountsList = {};
             for(let account of result.data) {
                 this.accountsList[account._id] = account;
             }
         },
         async updateAccount() {
-            await axios.post("/api/account/update", this.currentAccount);
+            await utils.post("/api/account/update", this.currentAccount);
             await this.getAccounts();
         },
         async addAccount() {
-            let result = await axios.post("/api/account", this.currentAccount);
-            if(result.status === 200) {
+            let result = await utils.post("/api/account", this.currentAccount);
+            if(result.success) {
                 this.selectItem("newAccount");
             }
             await this.getAccounts();
         },
         async deleteAccount() {
-            let result = await axios.delete("/api/account/" + this.currentAccount._id);
-            if(result.status === 200) {
+            let result = await utils.delete("/api/account/" + this.currentAccount._id);
+            if(result.success) {
                 this.selectItem("newAccount");
             }
             await this.getAccounts();

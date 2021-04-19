@@ -44,10 +44,10 @@ class EmailAccountDAO {
         }
 
         if(emailAccount !== null) {
-            this.update(account._id, account);
+            await this.update(account._id, account);
         }
         else {
-            this.addAccount(account);
+            await this.addAccount(account);
         }
     }
 

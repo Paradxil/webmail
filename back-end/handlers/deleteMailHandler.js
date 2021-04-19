@@ -1,6 +1,8 @@
 const DeleteMailService = require("../services/deleteMailService");
 const GetAccountService = require("../services/getAccountService");
 
+const Response = require("../model/response/response");
+
 class DeleteMailHandler {
     async handle(req, res) {
         let deleteMailService = new DeleteMailService();
@@ -9,11 +11,11 @@ class DeleteMailHandler {
         try {
             let account = await getAccountService.getAccount(req.body.accountid);
             await deleteMailService.deleteMail(req.body.uid, account, req.body.folder);
-            res.sendStatus(200);
+            res.send(Response.Success()); //TODO: Return the id of the email deleted.
         }
         catch(err) {
             console.log(err);
-            res.sendStatus(500);
+            res.send(Response.Error());
         }
     }
 }

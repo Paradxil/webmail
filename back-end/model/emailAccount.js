@@ -5,7 +5,12 @@ const emailAccountSchema = new mongoose.Schema({
     userid: {type: String, required: true},
     email: {type: String, required: true},
     name: String,
-    folders: [String],
+    folders: [{
+        path: String,
+        name: String,
+        use: String,
+        nicename: String
+    }],
     imap: {
         host: {type: String, required: true},
         port: {type: String, required: true},

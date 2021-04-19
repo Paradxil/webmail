@@ -1,6 +1,8 @@
 const UpdateAccountService = require("../services/updateAccountService");
 const SyncFoldersService = require("../services/syncFoldersService");
 
+const Response = require("../model/response/response");
+
 class UpdateAccountHandler {
     async handle(req, res) {
         let service = new UpdateAccountService();
@@ -16,13 +18,15 @@ class UpdateAccountHandler {
                 smtp: req.body.smtp
             }
 
+            //TODO: Check for an invalid request
+
             await service.updateAccount(req.body._id, account);
             await syncFoldersService.syncFolders(account);
-            res.sendStatus(200);
+            res.send(Response.Success());
         }
         catch(err) {
             console.log(err);
-            res.sendStatus(500);
+            res.send(Response.Error("Error updating account."));
         }
     }
 }
