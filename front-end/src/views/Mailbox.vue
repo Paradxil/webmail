@@ -7,7 +7,10 @@
                         <p>{{account.account.email}}</p>
                     </div>
                     <div class="sidebar-item" v-for="folder in account.account.folders" :class="{'current':currentFolder===folder&&currentAccountID===account.account._id}" :key="folder.path" @click="selectFolder(folder, account.account._id)">
-                        <p>{{folder.nicename}}</p>
+                        <div class="folder-item">
+                            <p class="folder-icon"><icon-base :name="folderIcons[folder.use]"/></p>
+                            <p>{{folder.nicename}}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="sidebar-item no-accounts" v-if="accountsList === null || Object.keys(accountsList).length === 0" @click="addNewAccount()">
@@ -105,7 +108,16 @@ export default {
             currentFolder: null,
             ready: false,
             collapsed: true,
-            timer: null
+            timer: null,
+            folderIcons: {
+                "" : "chevron-right",
+                "\\Inbox": "inbox",
+                "\\Spam": "alert-circle",
+                "\\Junk": "alert-circle",
+                "\\Drafts": "edit-2",
+                "\\Trash": "trash",
+                "\\Sent": "send"
+            }
         }
     },
     async created() {
@@ -154,8 +166,11 @@ export default {
                 if(!this.accountsList[account._id]) {
                     this.$set(this.accountsList, account._id, {});
                 }
+
+                this.sortFolders(account.folders);
+
                 this.$set(this.accountsList[account._id], 'account', account);
-                //this.accountsList[account._id].account = account;
+
                 if(!this.accountsList[account._id].emails) {
                     this.$set(this.accountsList[account._id], 'emails', {});
 
@@ -253,6 +268,15 @@ export default {
             } catch (error) {
                 console.log(error);
             }
+        },
+        sortFolders(folders) {
+            folders.sort((a,b) => {
+                if (a.path < b.path)
+                    return -1;
+                if (a.path > b.path)
+                    return 1;
+                return 0;
+            });
         }
     },
     computed: {
@@ -392,6 +416,18 @@ export default {
 
 .no-accounts {
     cursor: pointer;
+}
+
+.folder-item {
+    display: flex;
+    align-items: center;
+}
+
+.folder-icon {
+    margin-right: 16px;
+    text-align: right;
+    display: flex;
+    align-items: center;
 }
 
 #pane {
