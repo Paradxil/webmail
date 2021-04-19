@@ -4,11 +4,12 @@ class Database {
     constructor() {
     }
 
-    connect() {
+    async connect() {
         // connect to the database.
-        mongoose.connect('mongodb://localhost:27017/webmail', {
+        await mongoose.connect('mongodb://localhost:27017/webmail', {
             useNewUrlParser: true,
-            maxPoolSize: 25
+            maxPoolSize: 25,
+            useUnifiedTopology: true
         });
     }
 }
