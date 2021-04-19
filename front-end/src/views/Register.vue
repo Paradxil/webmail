@@ -9,6 +9,7 @@
                 <input type="text" v-model="username" id="username" placeholder="username"/>
                 <input type="text" v-model="recoveryEmail" id="recovery" placeholder="recovery email"/>
                 <input type="password" v-model="password" id="password" placeholder="password"/>
+                <div class="icon-captcha"></div>
                 <input type="submit" value="Register">
             </form>
         </div>
@@ -28,12 +29,17 @@ export default {
             message: null
         }
     },
+    mounted() {
+        if(window.loadCaptcha)
+            window.loadCaptcha();
+    },
     methods: {
         async register() {
             let response = await axios.post("/api/register", {
                 username: this.username,
                 email: this.recoveryEmail,
-                password: this.password
+                password: this.password,
+                captchaid: window.getCaptchaID()
             });
 
             if(response.status === 200) {

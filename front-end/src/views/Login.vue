@@ -8,6 +8,7 @@
             <form @submit.prevent="login">
                 <input type="text" v-model="username" id="username" placeholder="username"/>
                 <input type="password" v-model="password" id="password" placeholder="password"/>
+                <div class="icon-captcha"></div>
                 <input type="submit" value="Login">
             </form>
             <a>forgot password</a>
@@ -28,10 +29,15 @@ export default {
             username: null
         }
     },
+    mounted() {
+        if(window.loadCaptcha)
+            window.loadCaptcha();
+    },
     methods: {
         async login() {
             try {
                 await axios.post("/api/login", {
+                    captchaid: window.getCaptchaID(),
                     username: this.username,
                     password: this.password
                 });
