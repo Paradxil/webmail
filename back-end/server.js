@@ -1,6 +1,6 @@
 const express = require('express');
 const session = require("express-session");
-const MongoDBStore = require('connect-mongodb-session')(session);
+const MongoStore = require('connect-mongo');
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -16,30 +16,34 @@ const SendMailHandler = require("./handlers/sendMailHandler");
 const DeleteAccountHandler = require("./handlers/deleteAccountHandler");
 const UpdateAccountHandler = require("./handlers/updateAccountHandler");
 const DeleteMailHandler = require("./handlers/deleteMailHandler");
+const CaptchaHandler = require("./handlers/captchaHandler");
 
 const UserDAO = require("./data/userDAO");
 
 const app = express();
 
-var store = new MongoDBStore({
-    uri: 'mongodb://localhost:27017/webmail',
-    collection: 'sessions',
-    expires: 1000 * 60 * 60 * 5 // 5 hours
-});
+//Connect to the mongoDB
+Database.connect();
 
-// Catch mongodb session errors
-store.on('error', function(error) {
-    console.log(error);
+var store = MongoStore.create({
+    mongoUrl: 'mongodb://localhost:27017/webmail',
+    ttl: 14 * 24 * 60 * 60, // = 14 days. Default
+    touchAfter: 3600, // time period in seconds
+    autoRemove: 'interval',
+    autoRemoveInterval: 10, // In minutes. Default
+    crypto: {
+        secret: 'apples_bananas_penguins_crocodiles_polar_bears'
+    }
 });
 
 app.use(session({ 
-    secret: 'apples bananas penguins crocodiles polar bears',
+    secret: 'apples_bananas_penguins_crocodiles_polar_bears',
     cookie: {
         maxAge: 1000 * 60 * 60 * 5 // 5 hours
     },
-    store: store,
-    resave: true,
-    saveUninitialized: true
+    saveUninitialized: false,
+    resave: false,
+    store: store
 }));
 
 app.use(bodyParser.json());
@@ -73,53 +77,59 @@ passport.deserializeUser(async function(id, cb) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-//Connect to the mongoDB
-Database.connect();
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    else {
+        res.redirect('/login');
+    }
+}
 
 // Get email 
-app.post('/api/mail/', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+app.post('/api/mail/', isAuthenticated, async (req, res) => {
     let handler = new GetMailHandler();
     await handler.handle(req, res);
 });
 
 // Delete an email 
-app.post('/api/mail/delete', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+app.post('/api/mail/delete', isAuthenticated, async (req, res) => {
     let handler = new DeleteMailHandler();
     await handler.handle(req, res);
 });
 
 // Sync mailbox
-app.post('/api/sync', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+app.post('/api/sync', isAuthenticated, async (req, res) => {
     let handler = new SyncMailHandler();
     await handler.handle(req, res);
 });
 
 // Send email
-app.post('/api/send', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+app.post('/api/send', isAuthenticated, async (req, res) => {
     let handler = new SendMailHandler();
     await handler.handle(req, res);
 });
 
 // Get a list of email accounts associated with a user
-app.get('/api/accounts', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+app.get('/api/accounts', isAuthenticated, async (req, res) => {
     let handler = new GetAccountsHandler();
     await handler.handle(req, res);
 });
 
 //Update an email account
-app.post('/api/account/update', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+app.post('/api/account/update', isAuthenticated, async (req, res) => {
     let handler = new UpdateAccountHandler();
     await handler.handle(req, res);
 });
 
 // Add an email account
-app.post('/api/account', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+app.post('/api/account', isAuthenticated, async (req, res) => {
     let handler = new AddAccountHandler();
     await handler.handle(req, res);
 });
 
 // Delete an email account
-app.delete('/api/account/:id', require('connect-ensure-login').ensureLoggedIn(), async (req, res) => {
+app.delete('/api/account/:id', isAuthenticated, async (req, res) => {
     let handler = new DeleteAccountHandler();
     await handler.handle(req, res);
 });
@@ -131,26 +141,21 @@ app.post('/api/register', async function(req, res) {
 });
 
 // Login user
-app.post('/api/login', passport.authenticate('local'), function(req, res) {
+app.post('/api/login', CaptchaHandler.handle, passport.authenticate('local'), function(req, res) {
     res.redirect('/');
 });
 
 // Get the current user
-app.get('/api/user', function(req, res) {
+app.get('/api/user', isAuthenticated, function(req, res) {
     res.send(req.user||null);
 });
 
 // Logout user
-app.post('/api/logout',function(req, res){
-    req.logout();
-    store.destroy(req.session.id, (err) => {
-        if(err) {
-            console.log(err);
-            res.sendStatus(500);
-        }
-    })
-    res.sendStatus(200);
-    //res.redirect('/');
+app.post('/api/logout', isAuthenticated, function(req, res){
+    req.session.destroy(function (err) {
+        req.logout();
+        res.sendStatus(200);
+    });
 });
 
 
