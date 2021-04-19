@@ -7,6 +7,7 @@ class MailDAO {
     }
 
     async getMail(accountid, folder) {
+        //TODO: Make sure that the email's userid matches the userid of the requesting user
         return await Email.find({accountid: accountid, folder: folder}).sort(
             { 
                 "_id" : -1.0

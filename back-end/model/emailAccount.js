@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var encrypt = require('mongoose-encryption');
 
 //Create a scheme for email accounts
 const emailAccountSchema = new mongoose.Schema({
@@ -26,6 +27,10 @@ const emailAccountSchema = new mongoose.Schema({
         password: String
     }
 });
+
+emailAccountSchema.plugin(encrypt, {secret: process.env.SECRET,
+    excludeFromEncryption: ['userid'], 
+    additionalAuthenticatedFields: ['userid']});
 
 // Create a model for email accounts
 module.exports = mongoose.model('EmailAccounts', emailAccountSchema);

@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+var encrypt = require('mongoose-encryption');
 
 // Create a scheme for users
 const userSchema = new mongoose.Schema({
@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema({
     email: {type: String, unique: true, required: true, lowercase: true},
     password: {type: String, required: true}
 });
+
+userSchema.plugin(encrypt, {secret: process.env.SECRET, additionalAuthenticatedFields: ['email', 'username']});
 
 // This is a method that will be called automatically any time we convert a user
 // object to JSON. It deletes the password hash from the object. This ensures
