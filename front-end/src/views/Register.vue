@@ -17,7 +17,7 @@
 </template>
 
 <script>
-const axios = require('axios');
+const utils = require('../utils');
 
 export default {
     name: "Register",
@@ -35,14 +35,14 @@ export default {
     },
     methods: {
         async register() {
-            let response = await axios.post("/api/register", {
+            let response = await utils.post("/api/register", {
                 username: this.username,
                 email: this.recoveryEmail,
                 password: this.password,
                 captchaid: window.getCaptchaID()
             });
 
-            if(response.status === 200) {
+            if(response.success) {
                 this.$router.push({ name: 'Login'});
             }
             else {

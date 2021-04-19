@@ -25,7 +25,7 @@
 
 <script>
 const Quill = require('quill');
-const axios = require('axios');
+const utils = require('../utils');
 
 export default {
     props: {
@@ -49,23 +49,26 @@ export default {
     },
     methods: {
         async getFromAddresses() {
-            let result = await axios.get('/api/accounts');
-            let accounts = result.data;
+            let result = await utils.get('/api/accounts');
 
-            for(let account of accounts) {
-                this.fromAddresses.push(account.email);
-                this.accounts[account.email] = account;
+            if(result.success) {
+                let accounts = result.data;
+
+                for(let account of accounts) {
+                    this.fromAddresses.push(account.email);
+                    this.accounts[account.email] = account;
+                }
             }
         },
         async sendEmail() {
-            let result = await axios.post('/api/send', {
+            let result = await utils.post('/api/send', {
                 text: this.editor.getText(),
                 html: this.editor.root.innerHTML,
                 subject: this.emailSubject,
                 to: this.toaddress,
                 from: this.accounts[this.fromaddress]._id
             });
-            if(result.status === 200) {
+            if(result.success) {
                 this.resetForm();
             }
         },

@@ -5,7 +5,6 @@
 </template>
 
 <script>
-const axios = require("axios");
 const utils = require('../utils');
 
 export default {
@@ -22,10 +21,10 @@ export default {
     },
     methods: {
         async logout() {
-            await axios.post("/api/logout");
+            let response = await utils.post("/api/logout");
 
-            this.$root.loggedin = await utils.isLoggedIn();
-            if(this.$root.loggedin === false) {
+            if(response.sucess) {
+                this.$root.loggedin = false;
                 this.$router.push({ name: 'Home'});
             }
             else {
