@@ -23,8 +23,8 @@ export default {
         async logout() {
             let response = await utils.post("/api/logout");
 
-            if(response.sucess) {
-                this.$root.loggedin = false;
+            if(response.success) {
+                this.$root.loggedIn = false;
                 this.$router.push({ name: 'Home'});
             }
             else {
