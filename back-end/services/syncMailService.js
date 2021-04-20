@@ -34,6 +34,7 @@ class SyncMailService {
                             subject: mail.envelope.subject,
                             message: messageParts.text,
                             html: messageParts.html,
+                            flags: Array.from(mail.flags),
                             from: {
                                 name: mail.envelope.from?mail.envelope.from[0].name:"",
                                 address: mail.envelope.from?mail.envelope.from[0].address:""

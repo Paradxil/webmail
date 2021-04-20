@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="sidebar-section">
-                    <div class="sidebar-item email-preview" :class="{'current':currentEmail!==null&&currentEmail.uid===email.uid}" v-for="email of currentEmails" :key="email._id" @click="selectEmail(email)">
+                    <div class="sidebar-item email-preview" :class="{'current':currentEmail!==null&&currentEmail.uid===email.uid, 'unread':!email.flags.includes('\\Seen')}" v-for="email of currentEmails" :key="email._id" @click="selectEmail(email)">
                         <div class="email-from"><p>{{email.from.name||email.from.address}}</p></div>
                         <div class="email-subject"><p>{{email.subject}}</p></div>
                         <div class="email-date"><date-view :date="new Date(email.date)" time/></div>
@@ -361,6 +361,22 @@ export default {
 .accounts-list .sidebar-item, .accounts-list .sidebar-section-header {
     text-align: left;
     padding: 8px 16px;
+}
+
+.unread {
+    position: relative;
+}
+
+.unread::after {
+    content: " ";
+    display: block;
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border-radius: 8px;
+    background-color: var(--accent-4);
 }
 
 .email-preview {

@@ -12,7 +12,7 @@ class SyncFoldersService {
             await conn.connect();
 
             let folders = await mailImap.getAccountFolders();
-            
+
             let data = {
                 folders: folders
             }
@@ -23,7 +23,7 @@ class SyncFoldersService {
             throw err;
         }
         finally {
-            await conn.close();
+            await conn.logout();
         }
     }
 }

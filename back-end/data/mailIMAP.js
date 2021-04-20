@@ -9,7 +9,7 @@ class MailIMAP {
      */
     async getMail(last = 30, folder = "INBOX") {
         let client = this.conn.getClient();
-        
+
         // Select and lock a mailbox. Throws if mailbox does not exist
         let lock = await client.getMailboxLock(folder);
 
@@ -24,7 +24,7 @@ class MailIMAP {
             // list subjects for all messages
             // uid value is always included in FETCH response, envelope strings are in unicode.
             let mail = [];
-            for await (let msg of client.fetch(search, { envelope: true, uid:true, source: true, bodyStructure: true})){
+            for await (let msg of client.fetch(search, { envelope: true, uid:true, source: true, bodyStructure: true, flags: true})){
                 mail.push(msg);
             }
             return mail;

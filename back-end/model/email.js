@@ -11,6 +11,7 @@ const emailSchema = new mongoose.Schema({
     subject: String,
     message: String,
     html: String,
+    flags: [String],
     from: {
         name: String,
         address: String
