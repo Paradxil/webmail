@@ -116,6 +116,7 @@ export default {
             currentAccountID: null,
             currentFolder: null,
             ready: false,
+            loading: false,
             collapsed: true,
             timer: null,
             folderIcons: {
@@ -139,6 +140,8 @@ export default {
 
         //Get mail without syncing.
         //This will download mail already synced to the server and should be fast.
+        this.loading = true;
+
         await this.getAll();
 
         //Now sync mail, this takes much longer but the user can already see previously synced mail.
@@ -147,8 +150,13 @@ export default {
         //Stop showing the loading message.
         this.ready = true;
 
-        //Check and sync mail once per minute.
-        this.timer = setInterval(()=>{this.getAll(true);}, 1000 * 60);
+        //Check and sync mail once per 5 minutes.
+        this.timer = setInterval(()=>{
+            if(!this.loading) {
+                this.loading = true;
+                this.getAll(true);
+            }
+        }, 5000 * 60);
 
     },
     beforeDestroy() {
@@ -163,10 +171,11 @@ export default {
                     await this.syncMail(account._id);
                 }
                 for(let folder of account.folders) {
-                    this.getMail(folder.path, account._id);  
-                    this.getFolderStatus(account._id, folder.path);
+                    await this.getMail(folder.path, account._id);  
+                    await this.getFolderStatus(account._id, folder.path);
                 }
             }
+            this.loading = false;
         },
         async getAccounts() {
             let result = await utils.get("api/accounts");
