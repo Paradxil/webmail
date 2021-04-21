@@ -77,8 +77,6 @@ export default {
 .login-form form {
     display: flex;
     flex-direction: column;
-    max-width: 200px;
-    width: 100%;
 }
 
 input {
