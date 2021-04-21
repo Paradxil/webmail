@@ -19,6 +19,7 @@ const DeleteAccountHandler = require("./handlers/deleteAccountHandler");
 const UpdateAccountHandler = require("./handlers/updateAccountHandler");
 const DeleteMailHandler = require("./handlers/deleteMailHandler");
 const CaptchaHandler = require("./handlers/captchaHandler");
+const FlagMailHandler = require("./handlers/flagMailHandler");
 
 const Response = require("./model/response/response");
 
@@ -111,6 +112,12 @@ app.post('/api/sync', isAuthenticated, async (req, res) => {
 // Send email
 app.post('/api/send', isAuthenticated, async (req, res) => {
     let handler = new SendMailHandler();
+    await handler.handle(req, res);
+});
+
+// Send email
+app.post('/api/mail/flag', isAuthenticated, async (req, res) => {
+    let handler = new FlagMailHandler();
     await handler.handle(req, res);
 });
 

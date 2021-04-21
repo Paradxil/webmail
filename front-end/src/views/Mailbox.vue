@@ -36,13 +36,21 @@
                     </div>
                 </div>
                 <div class="sidebar-section">
-                    <div class="sidebar-item email-preview" :class="{'current':currentEmail!==null&&currentEmail.uid===email.uid, 'unread':!email.flags.includes('\\Seen')}" v-for="email of currentEmails" :key="email._id" @click="selectEmail(email)">
+                    <div class="sidebar-item email-preview" :class="{'current':currentEmail!==null&&currentEmail.uid===email.uid}" v-for="email of Object.values(currentEmails).reverse()" :key="email._id" @click="selectEmail(email)">
+                        <div class="email-controls">
+                            <div class="starred" :title="email.flags.includes('starred')?'Starred':'Star email'" @click.stop="markStarred(currentAccountID, currentFolder.path, email)">
+                                <icon-base class="starred-icon" :class="{'filled':email.flags.includes('starred')}" name="star"/>
+                            </div>
+                            <div class="unread" title="Unread" v-if="!email.flags.includes('\\Seen')">
+                                <icon-base class="unread-icon" name="circle"/>
+                            </div>
+                        </div>
                         <div class="email-from"><p>{{email.from.name||email.from.address}}</p></div>
                         <div class="email-subject"><p>{{email.subject}}</p></div>
                         <div class="email-date"><date-view :date="new Date(email.date)" time/></div>
                         <div class="email-message-preview"><p>{{getMessagePreview(email)}}</p></div>
                     </div>
-                    <div class="empty-folder sidebar-item" v-if="currentFolder !== null && currentEmails.length === 0 && this.ready"> 
+                    <div class="empty-folder sidebar-item" v-if="currentFolder !== null && Object.values(currentEmails).length === 0 && this.ready"> 
                         <p>This folder is empty.</p>
                     </div>
                     <div class="empty-folder sidebar-item" v-if="currentFolder === null"> 
@@ -220,6 +228,10 @@ export default {
             this.currentEmail = email;
             let iframe = document.querySelector("#iframe");
             iframe.style.height = 0;
+
+            if(!this.currentEmail.flags.includes('\\Seen')) {
+                this.markSeen(this.currentAccountID, this.currentFolder.path, this.currentEmail);
+            }
         },
         iframeLoaded() {
             let iframe = document.querySelector("#iframe");
@@ -277,6 +289,27 @@ export default {
                     return 1;
                 return 0;
             });
+        },
+        async markStarred(accountid, folder, email) {
+            await this.addFlags(accountid, folder, email, ['starred']);
+        },
+        async markSeen(accountid, folder, email) {
+            await this.addFlags(accountid, folder, email, ['\\Seen']);
+        },
+        async addFlags(accountid, folder, email, flags) {
+            let response = await utils.post("/api/mail/flag", {
+                accountid: accountid,
+                folder: folder,
+                uid: email.uid,
+                flags: flags
+            });
+
+            if(!response.success) {
+                console.log(response.data);
+            }
+            else {
+                this.accountsList[this.currentAccountID].emails[this.currentFolder.path][email.uid].flags = email.flags.concat(flags);
+            }
         }
     },
     computed: {
@@ -363,25 +396,50 @@ export default {
     padding: 8px 16px;
 }
 
-.unread {
-    position: relative;
+.starred-icon{
+    opacity: 0;
+    transition: 0.25s opacity;
 }
 
-.unread::after {
-    content: " ";
-    display: block;
-    width: 8px;
-    height: 8px;
+.sidebar-item:hover .starred-icon {
+    opacity: 1;
+}
+
+.starred .filled {
+    fill: var(--accent-4) !important;
+    color: var(--accent-4);
+    opacity: 1;
+}
+
+.unread {
+    color: var(--accent-4);
+}
+
+.unread-icon {
+    fill: var(--accent-4) !important;
+}
+
+.email-controls {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    border-radius: 8px;
-    background-color: var(--accent-4);
+    text-align: right;
+    top:0px;
+    left: 0px;
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    place-content: flex-end;
+}
+
+.email-controls > div {
+    padding: 5px;
 }
 
 .email-preview {
     padding: 16px;
     cursor: pointer;
+    position: relative;
 }
 
 .email-preview p {

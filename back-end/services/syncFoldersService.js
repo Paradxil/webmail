@@ -23,7 +23,7 @@ class SyncFoldersService {
             throw err;
         }
         finally {
-            await conn.logout();
+            await conn.close();
         }
     }
 }

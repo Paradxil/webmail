@@ -71,12 +71,37 @@ class MailIMAP {
         try {
             let query = {
                 uid: uid
-            }
+            };
 
             await client.messageDelete(query);
         }
         finally {
             lock.release();
+        }
+    }
+
+    async addEmailFlags(folder, uid, flags) {
+        let client = this.conn.getClient();
+        let error = null;
+
+        let lock = await client.getMailboxLock(folder);
+
+        try {
+            let query = {
+                uid: uid
+            };
+
+            await client.messageFlagsAdd(query, flags);
+        }
+        catch(err) {
+            error = err;
+        }
+        finally {
+            lock.release();
+        }
+
+        if(error !== null) {
+            throw error;
         }
     }
 
