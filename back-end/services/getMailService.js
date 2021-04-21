@@ -7,7 +7,16 @@ class GetMailService {
             if(accountid === null || folder === null) {
                 return;
             }
-            return await dao.getMail(accountid, folder);
+
+            let emailObject = {};
+
+            let emails = await dao.getMail(accountid, folder); 
+
+            emails.forEach((email) => {
+                emailObject[email.uid] = email;
+            });
+
+            return emailObject;
         } catch (error) {
             console.log(error);
             throw(error);
