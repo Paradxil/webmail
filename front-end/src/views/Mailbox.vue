@@ -150,13 +150,13 @@ export default {
         //Stop showing the loading message.
         this.ready = true;
 
-        //Check and sync mail once per 5 minutes.
+        //Check and sync mail once per minute.
         this.timer = setInterval(()=>{
             if(!this.loading) {
                 this.loading = true;
                 this.getAll(true);
             }
-        }, 5000 * 60);
+        }, 1000 * 60);
 
     },
     beforeDestroy() {

@@ -16,7 +16,10 @@ class SyncMailService {
             for(let folder of folders) {
                 let emails = [];
                 try {
-                    emails = await mailImap.getMail(30, folder.path);
+                    //Get the most recent message in the cache and only load messages received after it
+                    let lastMail = await mailDAO.getMostRecentEmail(account._id);
+                    let lastUID = lastMail === null?null:lastMail.uid||null;
+                    emails = await mailImap.getMail(30, folder.path, lastUID);
                 }
                 catch(err) {
                     console.log(err);

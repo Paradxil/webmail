@@ -15,6 +15,16 @@ class MailDAO {
         );
     }
 
+    async getMostRecentEmail(accountid) {
+        //TODO: Find a better way to get the most recent email
+        let emails = await Email.find({accountid: accountid}).sort(
+            { 
+                "_id" : -1.0
+            } 
+        );
+        return emails[0];
+    }
+
     /**
      * Add or update new mail items
      */

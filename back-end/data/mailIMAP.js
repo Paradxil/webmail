@@ -7,7 +7,7 @@ class MailIMAP {
      * Get received emails from the Imap server.
      * @param {Number} last How far back in days to retrieve emails. Defaults to the last 30 days.
      */
-    async getMail(last = 30, folder = "INBOX") {
+    async getMail(last = 30, folder = "INBOX", fromUID = null) {
         let client = this.conn.getClient();
 
         // Select and lock a mailbox. Throws if mailbox does not exist
@@ -18,8 +18,9 @@ class MailIMAP {
             sinceDate.setDate( sinceDate.getDate() - last );
 
             let search = {
-                since: sinceDate
-            }
+                since: sinceDate,
+                uid: fromUID===null?'1:*':fromUID + ':*'
+            };
 
             // list subjects for all messages
             // uid value is always included in FETCH response, envelope strings are in unicode.
