@@ -3,13 +3,19 @@ const MailDAO = require("../data/mailDAO");
 const MailIMAP = require("../data/mailIMAP");
 
 class FlagMailService {
-    async addEmailFlags(account, folder, uid, flags) {
-        let conn = new IMAPConnection(account);
-        let mailImap = new MailIMAP(conn);
-        let mailDAO = new MailDAO();
+    constructor(account) {
+        this.conn = new IMAPConnection(account);
+        this.mailImap = new MailIMAP(this.conn);
+        this.mailDAO = new MailDAO();
+    }
 
+    async close() {
+        await this.conn.close();
+    }
+
+    async addEmailFlags(folder, uid, flags) {
         try {
-            await conn.connect();
+            await this.conn.connect();
 
             //Separate the standard flags from non-standard flags.
             //Assume that any flag starting with '\' is supported by the IMAP server.
@@ -27,14 +33,21 @@ class FlagMailService {
                 }
             }*/
             
-            await mailImap.addEmailFlags(folder, uid, flags);
+            await this.mailImap.addEmailFlags(folder, uid, flags);
             //await mailDAO.addCustomMailFlags(account._id, folder, uid, customFlags);
         }
         catch(err) {
             throw err;
         }
-        finally {
-            await conn.close();
+    }
+
+    async removeEmailFlags(folder, uid, flags) {
+        try {
+            await this.conn.connect();
+            await this.mailImap.removeEmailFlags(folder, uid, flags);
+        }
+        catch(err) {
+            throw err;
         }
     }
 }

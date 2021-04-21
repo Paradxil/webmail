@@ -105,6 +105,31 @@ class MailIMAP {
         }
     }
 
+    async removeEmailFlags(folder, uid, flags) {
+        let client = this.conn.getClient();
+        let error = null;
+
+        let lock = await client.getMailboxLock(folder);
+
+        try {
+            let query = {
+                uid: uid
+            };
+
+            await client.messageFlagsRemove(query, flags);
+        }
+        catch(err) {
+            error = err;
+        }
+        finally {
+            lock.release();
+        }
+
+        if(error !== null) {
+            throw error;
+        }
+    }
+
 }
 
 module.exports = MailIMAP;

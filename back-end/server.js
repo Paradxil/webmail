@@ -19,7 +19,8 @@ const DeleteAccountHandler = require("./handlers/deleteAccountHandler");
 const UpdateAccountHandler = require("./handlers/updateAccountHandler");
 const DeleteMailHandler = require("./handlers/deleteMailHandler");
 const CaptchaHandler = require("./handlers/captchaHandler");
-const FlagMailHandler = require("./handlers/flagMailHandler");
+const AddFlagMailHandler = require("./handlers/addFlagMailHandler");
+const RemoveFlagMailHandler = require("./handlers/removeFlagMailHandler");
 
 const Response = require("./model/response/response");
 
@@ -115,9 +116,15 @@ app.post('/api/send', isAuthenticated, async (req, res) => {
     await handler.handle(req, res);
 });
 
-// Send email
+// Add flags
 app.post('/api/mail/flag', isAuthenticated, async (req, res) => {
-    let handler = new FlagMailHandler();
+    let handler = new AddFlagMailHandler();
+    await handler.handle(req, res);
+});
+
+// Remove flags
+app.post('/api/mail/flag/remove', isAuthenticated, async (req, res) => {
+    let handler = new RemoveFlagMailHandler();
     await handler.handle(req, res);
 });
 

@@ -4,7 +4,6 @@ const Response = require("../model/response/response");
 
 class FlagMailHandler {
     async handle(req, res) {
-        let service = new FlagMailService();
         let accountService = new GetAccountService();
 
         try {
@@ -25,12 +24,19 @@ class FlagMailHandler {
 
             let account = await accountService.getAccount(accountid);
 
+            let service = new FlagMailService(account);
+
             if(account === null) {
                 res.send(Response.Error("Invalid accountid."));
                 return;
             }
             
-            await service.addEmailFlags(account, folder, uid, flags);
+            try {
+                await this.editFlags(service, folder, uid, flags);
+            }
+            finally {
+                await service.close();
+            }
 
             res.send(Response.Success());
         }
@@ -39,6 +45,8 @@ class FlagMailHandler {
             res.send(Response.Error("Error editing email."));
         }
     }
+
+    async editFlags(service, folder, uid, flags) {};
 }
 
 module.exports = FlagMailHandler;
