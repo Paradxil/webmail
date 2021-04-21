@@ -32,5 +32,13 @@ emailAccountSchema.plugin(encrypt, {secret: process.env.SECRET,
     excludeFromEncryption: ['userid'], 
     additionalAuthenticatedFields: ['userid']});
 
+emailAccountSchema.methods.toJSON = function () {
+    var obj = this.toObject();
+    delete obj.imap.password;
+    delete obj.smtp.password;
+    return obj;
+}
+
+
 // Create a model for email accounts
 module.exports = mongoose.model('EmailAccounts', emailAccountSchema);

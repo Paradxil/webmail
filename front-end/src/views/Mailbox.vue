@@ -10,7 +10,7 @@
                         <div class="folder-item">
                             <p class="folder-icon"><icon-base :name="folderIcons[folder.use]"/></p>
                             <p>{{folder.nicename}}</p>
-                            <p class="folder-unread-count" title="Number of unread emails" :key="folder.path">{{unreadCounts[folder.path]>0?unreadCounts[folder.path]:''}}</p>
+                            <p class="folder-unread-count" title="Number of unread emails">{{unreadCounts[folder.path+account.account._id]>0?unreadCounts[folder.path+account.account._id]:''}}</p>
                         </div>
                     </div>
                 </div>
@@ -241,7 +241,7 @@ export default {
                 });
 
                 if(response.success) {
-                    this.unreadCounts[folderPath] = response.data.unseen;
+                    this.unreadCounts[folderPath+accountid] = response.data.unseen;
                 }
             }
             catch(err) {
@@ -258,7 +258,7 @@ export default {
             let iframe = document.querySelector("#iframe");
             iframe.style.height = 0;
 
-            if(!this.currentEmail.flags.includes('\\Seen')) {
+            if(!email.flags.includes('\\Seen')) {
                 this.markSeen(this.currentAccountID, this.currentFolder.path, this.currentEmail);
             }
         },
@@ -326,7 +326,7 @@ export default {
             await this.removeFlags(accountid, folder, email, ['Starred']); //Flags without a leading backslash are only saved to the database cache and not to the IMAP server.
         },
         async markSeen(accountid, folder, email) {
-            this.unreadCounts[folder] -= 1;
+            this.unreadCounts[folder+accountid] -= 1;
             await this.addFlags(accountid, folder, email, ['\\Seen']);
         },
         async addFlags(accountid, folder, email, flags) {

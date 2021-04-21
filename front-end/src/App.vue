@@ -13,6 +13,7 @@
     <router-view class="main-content"/>
     <div class="footer">
       <div class="footer-left"><a href="https://github.com/Paradxil/webmail">View Code</a></div>
+	<div class="footer-center">I spent ~20hrs on this portion of the project.</div>
       <div class="footer-right">Copyright Hunter Stratton 2021</div>
     </div>
   </div>
