@@ -10,6 +10,7 @@
                         <div class="folder-item">
                             <p class="folder-icon"><icon-base :name="folderIcons[folder.use]"/></p>
                             <p>{{folder.nicename}}</p>
+                            <p class="folder-unread-count" title="Number of unread emails" :key="folder.path">{{unreadCounts[folder.path]>0?unreadCounts[folder.path]:''}}</p>
                         </div>
                     </div>
                 </div>
@@ -125,6 +126,9 @@ export default {
                 "\\Drafts": "edit-2",
                 "\\Trash": "trash",
                 "\\Sent": "send"
+            },
+            unreadCounts: {
+
             }
         }
     },
@@ -160,6 +164,7 @@ export default {
                 }
                 for(let folder of account.folders) {
                     this.getMail(folder.path, account._id);  
+                    this.getFolderStatus(account._id, folder.path);
                 }
             }
         },
@@ -215,8 +220,23 @@ export default {
                 }
 
                 this.$set(this.accountsList[(accountid||this.currentAccountID)].emails, folderPath, response.data);
-            } catch (error) {
-                console.log(error);
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async getFolderStatus(accountid, folderPath) {
+            try {
+                let response = await utils.post("/api/account/status", {
+                    accountid: accountid,
+                    folder: folderPath
+                });
+
+                if(response.success) {
+                    this.unreadCounts[folderPath] = response.data.unseen;
+                }
+            }
+            catch(err) {
+                console.log(err);
             }
         },
         getMessagePreview(email) {
@@ -297,6 +317,7 @@ export default {
             await this.removeFlags(accountid, folder, email, ['Starred']); //Flags without a leading backslash are only saved to the database cache and not to the IMAP server.
         },
         async markSeen(accountid, folder, email) {
+            this.unreadCounts[folder] -= 1;
             await this.addFlags(accountid, folder, email, ['\\Seen']);
         },
         async addFlags(accountid, folder, email, flags) {
@@ -528,6 +549,11 @@ export default {
     text-align: right;
     display: flex;
     align-items: center;
+}
+
+.folder-unread-count {
+    flex: 1;
+    text-align: right;
 }
 
 #pane {

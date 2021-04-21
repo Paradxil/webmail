@@ -130,6 +130,10 @@ class MailIMAP {
         }
     }
 
+    async getStatus(folder) {
+        return await this.conn.getClient().status(folder, {unseen: true, recent: true, messages: true});
+    }
+
 }
 
 module.exports = MailIMAP;

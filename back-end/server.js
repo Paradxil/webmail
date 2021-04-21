@@ -21,6 +21,7 @@ const DeleteMailHandler = require("./handlers/deleteMailHandler");
 const CaptchaHandler = require("./handlers/captchaHandler");
 const AddFlagMailHandler = require("./handlers/addFlagMailHandler");
 const RemoveFlagMailHandler = require("./handlers/removeFlagMailHandler");
+const StatusHandler = require("./handlers/statusHandler");
 
 const Response = require("./model/response/response");
 
@@ -143,6 +144,12 @@ app.post('/api/account/update', isAuthenticated, async (req, res) => {
 // Add an email account
 app.post('/api/account', isAuthenticated, async (req, res) => {
     let handler = new AddAccountHandler();
+    await handler.handle(req, res);
+});
+
+// Get the status of an account folder
+app.post('/api/account/status', isAuthenticated, async (req, res) => {
+    let handler = new StatusHandler();
     await handler.handle(req, res);
 });
 
