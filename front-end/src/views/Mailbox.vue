@@ -38,8 +38,8 @@
                 <div class="sidebar-section">
                     <div class="sidebar-item email-preview" :class="{'current':currentEmail!==null&&currentEmail.uid===email.uid}" v-for="email of Object.values(currentEmails).reverse()" :key="email._id" @click="selectEmail(email)">
                         <div class="email-controls">
-                            <div class="starred" :title="email.flags.includes('starred')?'Starred':'Star email'" @click.stop="markStarred(currentAccountID, currentFolder.path, email)">
-                                <icon-base class="starred-icon" :class="{'filled':email.flags.includes('starred')}" name="star"/>
+                            <div class="starred" :title="email.flags.includes('Starred')?'Starred':'Star email'" @click.stop="markStarred(currentAccountID, currentFolder.path, email)">
+                                <icon-base class="starred-icon" :class="{'filled':email.flags.includes('Starred')}" name="star"/>
                             </div>
                             <div class="unread" title="Unread" v-if="!email.flags.includes('\\Seen')">
                                 <icon-base class="unread-icon" name="circle"/>
@@ -291,7 +291,7 @@ export default {
             });
         },
         async markStarred(accountid, folder, email) {
-            await this.addFlags(accountid, folder, email, ['starred']);
+            await this.addFlags(accountid, folder, email, ['Starred']); //Flags without a leading backslash are only saved to the database cache and not to the IMAP server.
         },
         async markSeen(accountid, folder, email) {
             await this.addFlags(accountid, folder, email, ['\\Seen']);
@@ -309,6 +309,7 @@ export default {
             }
             else {
                 this.accountsList[this.currentAccountID].emails[this.currentFolder.path][email.uid].flags = email.flags.concat(flags);
+                this.accountsList[this.currentAccountID].emails[this.currentFolder.path][email.uid].customFlags = email.customFlags.concat(flags);
             }
         }
     },

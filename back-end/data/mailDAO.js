@@ -22,7 +22,8 @@ class MailDAO {
         if(emails !== null&& emails.length > 0) { 
             for (let mail of emails) {
                 const id = {
-                    _id: mail._id
+                    _id: mail._id,
+                    folder: mail.folder
                 }
                 let mailItem = await Email.findOne(id);
 
@@ -42,6 +43,23 @@ class MailDAO {
 
     async deleteMail(accountid, folder, uid) {
         await Email.deleteOne({accountid: accountid, folder: folder, uid: uid});
+    }
+
+    async addCustomMailFlags(accountid, folder, uid, flags) {
+        console.log(flags);
+        let mailItem = await Email.findOne({accountid: accountid, folder: folder, _id: uid});
+
+        if(mailItem === null) {
+            console.log("NOOO!!");
+            return;
+        }
+
+        if(!mailItem.customFlags) {
+            mailItem.customFlags = [];
+        }
+
+        mailItem.customFlags = mailItem.customFlags.concat(flags);
+        await mailItem.save();
     }
 }
 module.exports = MailDAO;

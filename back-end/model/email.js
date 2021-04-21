@@ -11,7 +11,8 @@ const emailSchema = new mongoose.Schema({
     subject: String,
     message: String,
     html: String,
-    flags: [String],
+    flags: [String], //Used for standard IMAP flags such as '\Seen' and '\Deleted'
+    customFlags: [String], //Used for flags that cannot be saved to an IMAP server such as 'starred'
     from: {
         name: String,
         address: String
@@ -23,9 +24,9 @@ const emailSchema = new mongoose.Schema({
     date: String
 });
 
-emailSchema.plugin(encrypt, {secret: process.env.SECRET,
-    excludeFromEncryption: ['folder', 'accountid'], 
-    additionalAuthenticatedFields: ['folder', 'accountid']});
+//emailSchema.plugin(encrypt, {secret: process.env.SECRET,
+ //   excludeFromEncryption: ['folder', 'accountid'], 
+ //   additionalAuthenticatedFields: ['folder', 'accountid']});
 
 // Create a model for emails
 module.exports = mongoose.model('Emails', emailSchema);
