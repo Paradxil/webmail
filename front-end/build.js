@@ -3,7 +3,7 @@ require('marko/node-require').install(); //I need this to render the page correc
 var fs = require('fs');
 var path = require('path');
 var lasso = require('lasso');
-var template = require('marko').load(require.resolve('./src/components/template.marko'));
+var template = require('marko').load(require.resolve('./src/templates/template.marko'));
 
 lasso.configure('lasso-config.json');
 

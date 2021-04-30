@@ -16,6 +16,7 @@
     "lasso": "^3.4.0",
     "lasso-marko": "^3.0.1",
     "lasso-require": "^3.5.0",
-    "marko": "^5.9.0"
+    "marko": "^5.9.0",
+    "simple-marko-ui": "file:../../SimpleMarkoUI"
   }
 }
