@@ -7,7 +7,7 @@ var template = require('marko').load(require.resolve('./src/templates/template.m
 
 lasso.configure('lasso-config.json');
 
-var buildDir = path.join(__dirname, 'build');
+var buildDir = path.join(__dirname, 'dist');
 
 try {
     fs.mkdirSync(buildDir);

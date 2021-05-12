@@ -1,3 +1,22 @@
+import Mailbox from "<mailbox>"
+import Login from "<login>"
+
+class {
+    onCreate() {
+        this.state = {
+            pages: {"login": Login, "mailbox": Mailbox},
+            page: "login"
+        };
+    }
+
+    changePage(page) {
+        console.log("YAY!");
+        this.state.page = page;
+        console.log(this.state.page);
+        this.setStateDirty("page");
+    }
+}
+
 style {
     :root {
         /*https://coolors.co/ffcdb2-ffb4a2-e5989b-b5838d-6d6875*/
@@ -14,11 +33,17 @@ style {
     }
 }
 
+static function handleClick(event) {
+    console.log("Clicked!");
+}
+
 ui-vertical-layout
     ui-horizontal-layout filled padded centered spaced
         ui-container
             lasso-img src="../assets/logo2.png" style={maxHeight: "45px", width: "auto"}
-        ui-button rounded text="Mailbox"
-        ui-button rounded text="Compose"
+        button on-click(handleClick) -- Log click
+        ui-button rounded text="Mailbox" on-click("changePage", 'mailbox')
+        ui-button rounded text="Login" on-click('changePage', 'login')
+        button on-click(handleClick) -- Log click
     div
-        mailbox
+        <${state.pages[state.page]} key=state.page/>
