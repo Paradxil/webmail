@@ -2,7 +2,7 @@
     "plugins": [
         "lasso-marko"
     ],
-    "outputDir": "build/static/",
+    "outputDir": "dist/static/",
     "fingerprintsEnabled": true,
     "urlPrefix": "/static",
     "minify": false,
