@@ -9,7 +9,7 @@ var template = require('marko').load(require.resolve('./src/templates/template.m
 const { networkInterfaces } = require('os');
 const del = require('del');
 
-let PORT = 8080;
+let PORT = 8081;
 
 lasso.configure('lasso-config.json');
 
@@ -46,7 +46,9 @@ template.render({}, out).then(()=>{
         });
     });
 
+
     app.listen(PORT, () => {
+        PORT = app.address().port;
         process.send('online');
         console.log("Server listening at:");
         console.log("http://127.0.0.1:"+PORT)

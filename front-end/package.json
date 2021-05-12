@@ -13,11 +13,12 @@
   "license": "MIT",
   "dependencies": {
     "@lasso/marko-taglib": "^2.0.3",
+    "browser-refresh": "^1.7.3",
     "del": "^6.0.0",
     "lasso": "^3.4.0",
     "lasso-marko": "^3.0.1",
     "lasso-require": "^3.5.0",
     "marko": "^5.9.0",
-    "simple-marko-ui": "file:../../SimpleMarkoUI"
+    "simple-marko-ui": "file:../../simple-marko-ui"
   }
 }
