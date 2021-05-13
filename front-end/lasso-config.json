@@ -3,9 +3,9 @@
         "lasso-marko"
     ],
     "outputDir": "dist/static/",
-    "fingerprintsEnabled": true,
+    "fingerprintsEnabled": false,
     "urlPrefix": "/static",
     "minify": false,
-    "resolveCssUrls": true,
-    "bundlingEnabled": true
+    "resolveCssUrls": false,
+    "bundlingEnabled": false
 }

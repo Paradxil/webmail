@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node build.js",
     "serve": "http-server dist/",
-    "dev": "browser-refresh dev.js",
+    "dev": "npm run build && npm run serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Hunter Stratton",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@lasso/marko-taglib": "^2.0.3",
     "browser-refresh": "^1.7.3",
+    "browser-refresh-taglib": "^1.1.0",
     "del": "^6.0.0",
     "lasso": "^3.4.0",
     "lasso-marko": "^3.0.1",

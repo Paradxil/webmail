@@ -1,3 +1,5 @@
+Object.keys(require.cache).forEach(function(key) { delete require.cache[key] })
+
 require('marko/node-require').install(); //I need this to render the page correctly, don't know why
 
 var fs = require('fs');

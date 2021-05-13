@@ -10,9 +10,7 @@ class {
     }
 
     changePage(page) {
-        console.log("YAY!");
         this.state.page = page;
-        console.log(this.state.page);
         this.setStateDirty("page");
     }
 }
@@ -37,13 +35,15 @@ static function handleClick(event) {
     console.log("Clicked!");
 }
 
-ui-vertical-layout
-    ui-horizontal-layout filled padded centered spaced
-        ui-container
-            lasso-img src="../assets/logo2.png" style={maxHeight: "45px", width: "auto"}
-        button on-click(handleClick) -- Log click
-        ui-button rounded text="Mailbox" on-click("changePage", 'mailbox')
-        ui-button rounded text="Login" on-click('changePage', 'login')
-        button on-click(handleClick) -- Log click
-    div
+ui-linear-layout vertical
+    @element
+        ui-linear-layout filled padded centered gutter="4px"
+            @element
+                ui-container
+                    lasso-img src="../assets/logo2.png" style={maxHeight: "45px", width: "auto"}
+            @element
+                ui-button rounded text="Mailbox" on-click("changePage", 'mailbox')
+            @element
+                ui-button rounded text="Login" on-click('changePage', 'login')
+    @element
         <${state.pages[state.page]} key=state.page/>
