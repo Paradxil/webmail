@@ -1,6 +1,13 @@
 ui-container centered padded
-    ui-linear-layout padded vertical gutter="16px"
+    ui-linear-layout vertical padded gutter="16px"
         @element
-            ui-textbox placeholder="Username" id="username" value=""
+            ui-text centered -- Login
         @element
-            ui-textbox placeholder="Password" id="password" value=""
+            ui-form padded vertical gutter="16px"
+                @element
+                    ui-textbox placeholder="Username" id="username" value=""
+                @element
+                    ui-textbox placeholder="Password" id="password" value=""
+                @element
+                    ui-submit
+                        -- Login
