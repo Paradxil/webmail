@@ -35,12 +35,12 @@ static function handleClick(event) {
     console.log("Clicked!");
 }
 
-ui-linear-layout vertical
+ui-linear-layout vertical fillspace
     @element
         ui-linear-layout filled padded aligncenter gutter="4px" fullwidth
             @element
                 ui-container
-                    lasso-img src="../assets/logo2.png" style={maxHeight: "45px", width: "auto"}
+                    img src="../assets/logo2.png" style={maxHeight: "45px", width: "auto"}
             @element
                 ui-button rounded text="Mailbox" on-click("changePage", 'mailbox')
             @element
